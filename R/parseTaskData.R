@@ -17,8 +17,6 @@ getGroupPerformance <- function(year, semester, task) {
   folder <- sprintf('data/%s/%s/%s/',year,semester,task)
   files <- list.files(folder,pattern='*.csv')
   
-  print(length(files))
-  
   # use readLines and weed out those with too few lines
   filelines <- unlist(lapply(sprintf('data/%s/%s/%s/%s',year,semester,task,files), function(x){length(readLines(x))}))
   files <- files[which(filelines %in% nlines)]
@@ -45,6 +43,7 @@ getGroupPerformance <- function(year, semester, task) {
   functionoutput <- as.data.frame(do.call("rbind", lapply(participants$filename, f)))
   
   # return a data frame
+  return(functionoutput)
   
 }
 
