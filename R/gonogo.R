@@ -37,6 +37,20 @@ gonogo <- function(filename) {
     use <- FALSE
   }
   
+  # get dprime, we need counts:
+  hits   <- length(which(df$trialtype == 'go'   & df$trialResp.corr == 1))
+  misses <- length(which(df$trialtype == 'go'   & df$trialResp.corr == 0))
+  fas    <- length(which(df$trialtype == 'nogo' & df$trialResp.corr == 1))
+  crs    <- length(which(df$trialtype == 'nogo' & df$trialResp.corr == 0))
+  
+  dpr    <- dprime(hits=hits, 
+                   misses=misses, 
+                   fas=fas, 
+                   crs=crs, 
+                   hautus=TRUE)
+  
+  sigdectOutput <- list('dprime'=dpr$dprime,'sensitivity'=dpr$sensitivity,'specificity'=dpr$specificity)
+  
   # do we use prop correct, or prop error?
   correctOutput <- as.vector(unlist(correct$trialResp.corr))
   names(correctOutput) <- sprintf('%s_prop.correct',correct$trialtype)
@@ -59,7 +73,7 @@ gonogo <- function(filename) {
   }
   
   # create named output vector
-  output <- as.list(c(errorOutput, RToutput))
+  output <- as.list(c(errorOutput, RToutput, sigdectOutput))
   if (!use) {
     output[1:length(output)] <- NA
   }

@@ -21,9 +21,11 @@ dprime <- function(hits, misses, fas, crs, hautus=FALSE) {
   beta   <- exp(-Zhr * Zhr/2 + Zfr * Zfr/2)
   c      <- -(Zhr + Zfr)/2
   
-  return( list( 'dprime' = dprime,
-                'beta'   = beta,
-                'c'      = c         ))
+  return( list( 'dprime'      = dprime,
+                'beta'        = beta,
+                'c'           = c,         
+                'sensitivity' = hit_rate,
+                'specificity' = 1/fa_rate ) )
   
 }
 
