@@ -8,8 +8,9 @@
 dprime <- function(hits, misses, fas, crs, hautus=FALSE) {
   
   if (hautus) {
-    hit_rate <- (hits + 0.5) / (hits + misses + 1)
-    fa_rate  <- (fas  + 0.5) / (fas  + crs    + 1)
+    hit_rate    <- (hits + 0.5) / (hits + misses + 1)
+    fa_rate     <- (fas  + 0.5) / (fas  + crs    + 1)
+    specificity <- (crs  + 0.5) / (crs  + misses + 1)
   } else {
     hit_rate <- hits / (hits + misses)
     fa_rate  <- fas  / (fas  + crs)
@@ -25,7 +26,7 @@ dprime <- function(hits, misses, fas, crs, hautus=FALSE) {
                 'beta'        = beta,
                 'c'           = c,         
                 'sensitivity' = hit_rate,
-                'specificity' = 1/fa_rate ) )
+                'specificity' = specificity ) )
   
 }
 
