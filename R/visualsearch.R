@@ -10,6 +10,10 @@ visualsearch <- function(filename) {
   # first we read the data file:
   df <- read.csv(filename, stringsAsFactors=F)
   
+  thisparticipant <- as.character(df$participant[1])
+  thistotaltime <- df$cumulativetime[dim(df)[1]]
+  thisOS <- df$OS[1]
+  
   # set up a vector for output, must be a named vector:
   output <- c()
   use = TRUE
@@ -68,9 +72,10 @@ visualsearch <- function(filename) {
   if (!use) {
     output[1:length(output)] <- NA
   }
-  output[['participant']] <-  df$participant[1]
-  output[['totaltime']] <- df$cumulativetime[dim(df)[1]]
-  output[['OS']] <- df$OS[1]
+  output[['participant']] <- thisparticipant
+  output[['totaltime']]   <- thistotaltime
+  output[['OS']]          <- thisOS
+  
   
   # return to caller:
   return(output)
