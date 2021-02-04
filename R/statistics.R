@@ -27,7 +27,7 @@ dprime <- function(hits, misses, fas, crs, hautus=FALSE) {
   
 }
 
-cowank <- function(hits, misses, fas, crs, N) {
+cowan.k <- function(hits, misses, fas, crs, N) {
   
   hit_rate <- hits / (hits + misses)
   cr_rate  <- crs  / (crs  + fas)
