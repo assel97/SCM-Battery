@@ -12,26 +12,35 @@ visualsearch <- function(filename) {
   
   # set up a vector for output, must be a named vector:
   output <- c()
-  
-  # get some basic descriptors of the participant:
-  descriptors <- as.vector(unlist(df[dim(df)[1],c('participant','OS','cumulativetime')]))
-  names(descriptors) <- c('participant', 'OS', 'totaltime')
-  
-  # add descriptors to output:
-  #output <- c(output,  descriptors)
+  use = TRUE
   
   # remove lines for breaks:
   df <- df[-which(is.na(df$trialResp.corr)),]
   
+  # remove lines with very low RTs:
+  df <- df[which(df$trialResp.rt > 0.1),]
+  
   # get target presence as a variable:
+  df$counttrials <- 1
   df$targetpresent <- NA
   df$targetpresent[which(df$trialResp.keys == 'm' & df$trialResp.corr == 1)] <- 'absent'
   df$targetpresent[which(df$trialResp.keys == 'x' & df$trialResp.corr == 1)] <- 'present'
   df$targetpresent[which(df$trialResp.keys == 'm' & df$trialResp.corr == 0)] <- 'present'
   df$targetpresent[which(df$trialResp.keys == 'x' & df$trialResp.corr == 0)] <- 'absent'
   
-  # add proportion correct scores to data:
+  # check if there are enough good trials left
+  counttrials <- aggregate(counttrials ~ arraysize + targetpresent, data=df, FUN=sum)
+  if (any(counttrials$counttrials < 18)) {
+    #print(filename)
+    use = FALSE
+  }
+  
+  # get proportion correct scores to data:
   correct <- aggregate(trialResp.corr ~ arraysize + targetpresent, data=df, FUN=mean)
+  # remove people who are less then 66.7% correct in any condition
+  if (any(correct$trialResp.corr < (2/3))) {
+    use = FALSE
+  }
   correctOutput <- as.vector(unlist(correct$trialResp.corr))
   names(correctOutput) <- sprintf('propcorrect_%d_%s',correct$arraysize,correct$targetpresent)
   
@@ -55,7 +64,13 @@ visualsearch <- function(filename) {
   }
   
   # create named output vector
-  output <- c(output, correctOutput, RToutput)
+  output <- as.list(c(output, correctOutput, RToutput))
+  if (!use) {
+    output[1:length(output)] <- NA
+  }
+  output[['participant']] <-  df$participant[1]
+  output[['totaltime']] <- df$cumulativetime[dim(df)[1]]
+  output[['OS']] <- df$OS[1]
   
   # return to caller:
   return(output)
