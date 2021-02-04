@@ -22,7 +22,7 @@ getGroupPerformance <- function(year, semester, task) {
   files <- files[which(filelines %in% nlines)]
   
   # extract participant IDs and timestamps
-  participants <- as.data.frame(do.call("rbind", lapply(files, getIDtimestamp, 'visualsearch')), stringsAsFactors=F)
+  participants <- as.data.frame(do.call("rbind", lapply(files, getIDtimestamp, task)), stringsAsFactors=F)
   participants <- participants[order(participants$timestamp),]
   row.names(participants) <- NULL
   
@@ -30,7 +30,7 @@ getGroupPerformance <- function(year, semester, task) {
   participants <- participants[!duplicated(participants$participant, fromLast=!usefirst),]
   
   # get relative filenames:
-  participants$filename <- sprintf('data/%s/%s/%s/%s_visualsearch_%s.csv',year,semester,task,participants$participant,participants$timestamp)
+  participants$filename <- sprintf('data/%s/%s/%s/%s_%s_%s.csv',year,semester,task,participants$participant,task,participants$timestamp)
   
   # magic: this assigns a function to f, by finding a function
   # that has the name specified in the character variable task
@@ -41,6 +41,12 @@ getGroupPerformance <- function(year, semester, task) {
   
   # and use lapply to run stuff on all participants
   functionoutput <- as.data.frame(do.call("rbind", lapply(participants$filename, f)))
+  
+  # this will be a complicated format, so we simplify it a little here
+  colnames <- names(functionoutput)
+  for (colname in colnames) {
+    functionoutput[colname] <- unlist(functionoutput[colname])
+  }
   
   # return a data frame
   return(functionoutput)
