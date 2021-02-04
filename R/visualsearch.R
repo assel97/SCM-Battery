@@ -37,14 +37,16 @@ visualsearch <- function(filename) {
   if (any(counttrials$counttrials < 18)) {
     #print(filename)
     use = FALSE
+    #cat('removed because of low performance\n')
   }
   
   # get proportion correct scores to data:
   correct <- aggregate(trialResp.corr ~ arraysize + targetpresent, data=df, FUN=mean)
   # remove people who are less then 66.7% correct in any condition
-  if (any(correct$trialResp.corr < (2/3))) {
-    use = FALSE
-  }
+  # if (any(correct$trialResp.corr < (2/3))) {
+  #   use = FALSE
+  #   cat('what is going on?\n')
+  # }
   correctOutput <- as.vector(unlist(correct$trialResp.corr))
   names(correctOutput) <- sprintf('propcorrect_%d_%s',correct$arraysize,correct$targetpresent)
   
