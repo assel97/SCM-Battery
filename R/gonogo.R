@@ -27,14 +27,21 @@ gonogo <- function(filename) {
   # remove lines for breaks:
   df <- df[-which(is.na(df$trialResp.corr)),]
   
+  # remove people who hit space in ALL trials:
+  notspace <- length(which(df$trialResp.keys != 'space'))
+  if (notspace < 1) {
+    #cat('all space?\n')
+  }
+  
   # remove lines with very low RTs:
   df <- df[which(df$trialResp.rt > 0.1 | is.na(df$trialResp.rt)),]
   
   # get proportion correct scores to data:
   correct <- aggregate(trialResp.corr ~ trialtype, data=df, FUN=mean)
   # remove people who are less then 66.7% correct in any condition
-  if (any(correct$trialResp.corr < 0.5)) {
+  if (any(correct$trialResp.corr[which(correct$trialtype == 'go')] < 0.95)) {
     use <- FALSE
+    #cat('too many errors\n')
   }
   
   # get dprime, we need counts:
@@ -49,7 +56,7 @@ gonogo <- function(filename) {
                    crs=crs, 
                    hautus=TRUE)
   
-  sigdectOutput <- list('dprime'=dpr$dprime,'sensitivity'=dpr$sensitivity,'specificity'=dpr$specificity)
+  sigdectOutput <- list('dprime'=dpr$dprime,'sensitivity'=dpr$sensitivity)
   
   # do we use prop correct, or prop error?
   correctOutput <- as.vector(unlist(correct$trialResp.corr))
