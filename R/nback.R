@@ -37,9 +37,12 @@ nback <- function(filename) {
   if (dim(df)[1] > 0 & 'trialResp.rt' %in% names(df)) {
     #print(dim(df))
     correct <- aggregate(correct ~ target + trialsNum, data=df, FUN=mean)
-    if (any(correct$correct[which(correct$target == 'present')] < 0.50)) {
+    if ( any( correct$correct[which(correct$target == 'present')] < c(0.50, 0.25, 0.01) ) ) {
       use <- FALSE
     }
+    # if (any(correct$correct[which(correct$target == 'present')] < 0.50)) {
+    #   use <- FALSE
+    # }
   } else {
     use <- FALSE
   }
@@ -113,8 +116,9 @@ nback <- function(filename) {
     output[1:length(output)] <- NA
   }
   
-  output[['participant']] <- thisparticipant
-  output[['OS']]          <- thisOS
+  output[['participant']]     <- thisparticipant
+  output[['OS']]              <- thisOS
+  output[['passedscreening']] <- use
   
   return(output)
   
