@@ -18,7 +18,7 @@ gonogo <- function(filename) {
   
   # get a more useful column with trialtype:
   df$trialtype <- NA
-  df$trialtype[which(df$colorName == 'blue')] <- 'go'
+  df$trialtype[which(df$colorName == 'blue')]   <- 'go'
   df$trialtype[which(df$colorName == 'orange')] <- 'nogo'
   
   # set up a vector for output, must be a named vector:
@@ -85,9 +85,10 @@ gonogo <- function(filename) {
     output[1:length(output)] <- NA
   }
   
-  output[['participant']] <- thisparticipant
-  output[['totaltime']]   <- thistotaltime
-  output[['OS']]          <- thisOS
+  output[['participant']]     <- thisparticipant
+  output[['totaltime']]       <- thistotaltime
+  output[['OS']]              <- thisOS
+  output[['passedscreening']] <- use
   
   return(output)
   
