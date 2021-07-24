@@ -13,7 +13,7 @@ getOSFdata <- function(year, semester, task, overwrite=FALSE, removezip=FALSE) {
   
   # check that the task / semester / year combination exists on OSF, and is unique:
   # if not: abort
-  if (length(idx) != 1) {
+  if (length(idx) > 1) {
     # no unique file found: aborting this one
     if (length(idx) == 0) {
       return(FALSE)
