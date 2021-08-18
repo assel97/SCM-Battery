@@ -5,19 +5,22 @@ usefirst <- TRUE
 # how many lines should be in a data file? (there may be multiple correct options)
 nlines <- c(183)
 
-nback <- function(filename) {
+nBack <- function(filename) {
   
   use <- TRUE
   
   # first we read the data file:
-  df <- read.csv(filename, stringsAsFactors=F)
   
+  df <- read.csv(filename, stringsAsFactors=F)
+ 
   thisparticipant <- as.character(df$participant[1])
   #thistotaltime <- df$cumulativetime[dim(df)[1]]
   thisOS <- df$OS[1]
   
+  
   # remove break lines:
   df <- df[which(!is.na(df$trialsNum)),]
+  
   
   # remove very low RTs:
   if ('trialResp.rt' %in% names(df)) {
@@ -28,6 +31,7 @@ nback <- function(filename) {
   
   # get a column indicating whether or not the response is correct:
   df$correct <- (df$trialResp.keys == df$corrAns)
+  
   
   # get a column indicating whether or not a target trial was presented:
   df$target <- 'absent'
@@ -81,6 +85,8 @@ nback <- function(filename) {
       names(newsigdectOutput) <- sprintf('N%d_%s',rep(N,2),c('dprime','cowan.k'))
       sigdectOutput <- c(sigdectOutput, newsigdectOutput)
       
+     
+      
       # get RTs for hits
       hit_idx <- which(Ndf$correct == TRUE  & Ndf$target == 'present') 
       if (length(hit_idx) > 0) {
@@ -109,12 +115,14 @@ nback <- function(filename) {
     
   }
   
-
+  
+  
   # create named output vector
   output <- as.list(c(correctOutput, RToutput, sigdectOutput))
   if (!use) {
     output[1:length(output)] <- NA
   }
+ 
   
   output[['participant']]     <- thisparticipant
   output[['OS']]              <- thisOS

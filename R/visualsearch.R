@@ -10,6 +10,7 @@ visualsearch <- function(filename) {
   # first we read the data file:
   df <- read.csv(filename, stringsAsFactors=F)
   
+  
   thisparticipant <- as.character(df$participant[1])
   thistotaltime <- df$cumulativetime[dim(df)[1]]
   thisOS <- df$OS[1]
@@ -18,13 +19,17 @@ visualsearch <- function(filename) {
   output <- c()
   use = TRUE
   
+ 
+  
   # remove lines for breaks:
   df <- df[-which(is.na(df$trialResp.corr)),]
+  
   
   # remove lines with very low RTs:
   df <- df[which(df$trialResp.rt > 0.1),]
   # remove lines with ridiculously high RTs:
   df <- df[which(df$trialResp.rt < 40),]
+  
   
   # get target presence as a variable:
   df$counttrials <- 1
@@ -34,7 +39,7 @@ visualsearch <- function(filename) {
   df$targetpresent[which(df$trialResp.keys == 'm' & df$trialResp.corr == 0)] <- 'present'
   df$targetpresent[which(df$trialResp.keys == 'x' & df$trialResp.corr == 0)] <- 'absent'
   
-  
+ 
   # check if there are enough good trials left
   counttrials <- aggregate(counttrials ~ arraysize + targetpresent, data=df, FUN=sum)
   if (any(counttrials$counttrials < 18)) {
@@ -42,6 +47,7 @@ visualsearch <- function(filename) {
     use = FALSE
     #cat('removed because of low performance\n')
   }
+  
   
   # get proportion correct scores to data:
   correct <- aggregate(trialResp.corr ~ arraysize + targetpresent, data=df, FUN=mean)
@@ -53,6 +59,7 @@ visualsearch <- function(filename) {
   correctOutput <- as.vector(unlist(correct$trialResp.corr))
   names(correctOutput) <- sprintf('propcorrect_%d_%s',correct$arraysize,correct$targetpresent)
   
+  
   # we remove the trials without a correct response:
   df[which(df$trialResp.corr == 1),]
   
@@ -61,6 +68,7 @@ visualsearch <- function(filename) {
   
   # actually, we're going to go with the median, which is less sensitive to outliers:
   #RTs <- aggregate(trialResp.rt ~ arraysize + targetpresent, data=df, FUN=median)
+ 
   
   RToutput <- as.vector(unlist(RTs$trialResp.rt))
   names(RToutput) <- sprintf('RT_%d_%s',RTs$arraysize,RTs$targetpresent)
@@ -75,6 +83,7 @@ visualsearch <- function(filename) {
     output <- c(output, lmoutput)
     
   }
+  
   
   # create named output vector
   output <- as.list(c(output, correctOutput, RToutput))

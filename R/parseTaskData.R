@@ -13,25 +13,40 @@ getGroupPerformance <- function(year, semester, task) {
   # usefirst: boolean saying if we use the first of multiple files for one participants
   # (usually best to keep this TRUE)
   
+  
   # get list of file names
   folder <- sprintf('data/%s/%s/%s/',year,semester,task)
   files <- list.files(folder,pattern='*.csv')
   
+  print(files)
+  
   # use readLines and weed out those with too few lines
   filelines <- unlist(lapply(sprintf('data/%s/%s/%s/%s',year,semester,task,files), function(x){length(readLines(x))}))
-  files <- files[which(filelines %in% nlines)]
+ 
+  print(filelines)
+  
+   files <- files[which(filelines %in% nlines)]
+  
+  print(files)
   
   # extract participant IDs and timestamps
   participants <- as.data.frame(do.call("rbind", lapply(files, getIDtimestamp, task)), stringsAsFactors=F)
+  print(participants)
   participants <- participants[order(participants$timestamp),]
   row.names(participants) <- NULL
+  
+  print(participants)
   
   # remove duplicates:
   participants <- participants[!duplicated(participants$participant, fromLast=!usefirst),]
   
+  
+  
   # get relative filenames:
   participants$filename <- sprintf('data/%s/%s/%s/%s_%s_%s.csv',year,semester,task,participants$participant,task,participants$timestamp)
   
+  print(participants$filename)
+ 
   # magic: this assigns a function to f, by finding a function
   # that has the name specified in the character variable task
   # which is why the function in the sourced file
@@ -39,14 +54,23 @@ getGroupPerformance <- function(year, semester, task) {
   # needs to have the same name as the task
   f <- match.fun(task)
   
+  print(f)
+  
   # and use lapply to run stuff on all participants
-  functionoutput <- as.data.frame(do.call("rbind", lapply(participants$filename, f)))
+  functionoutput <- as.data.frame(do.call("rbind", lapply(participants$filename,f)))
+ 
+  
+  
+  print(functionoutput)
+  
   
   # this will be a complicated format, so we simplify it a little here
   colnames <- names(functionoutput)
   for (colname in colnames) {
     functionoutput[colname] <- unlist(functionoutput[colname])
   }
+  
+  print(colnames)
   
   # return a data frame
   return(functionoutput)
